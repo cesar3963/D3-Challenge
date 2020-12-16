@@ -2,7 +2,7 @@
 id="scatter"
 
 //svg limits
-var svgWidth = 960;
+var svgWidth = 860;
 var svgHeight = 620;
 
 //Margin size 
@@ -14,7 +14,7 @@ var margin = {
 };
 
 //Setting margens less then svg limits
-var width = svgWidth - margin.left - margin.right;
+var width = svgWidth - margin.right - margin.left;
 var height = svgHeight - margin.top - margin.bottom;
 
 // svg wrapper to hold svg group
@@ -100,8 +100,7 @@ function renderText(textGroup, newXScale, chosenXAxis, newYScale, chosenYAxis) {
       .duration(1000)
       .attr("x", d => newXScale(d[chosenXAxis]))
       .attr("y", d => newYScale(d[chosenYAxis]));
-     
-  return textGroup;
+    return textGroup;
 }
 
 
@@ -324,7 +323,7 @@ d3.csv("./assets/data/data.csv").then(function(state_data,err) {
 
         // console.log(chosenXAxis)
 
-        // functions here found above csv import
+    
         // updates x scale for new data
         xLinearScale = xScale(state_data, chosenXAxis);
 
@@ -332,29 +331,28 @@ d3.csv("./assets/data/data.csv").then(function(state_data,err) {
         xAxis = renderAxesX(xLinearScale, xAxis);
 
         // updates circles with new x values
-        circlesGroup = renderCircles(circlesGroup, xLinearScale, chosenXAxis);
+        circlesGroup = renderCircles(circlesGroup, xLinearScale, chosenXAxis, yLinearScale, chosenYAxis);
+        // update text in circle
+        textGroup = renderText(textGroup, xLinearScale, chosenXAxis, yLinearScale, chosenYAxis);
+        
 
         // updates tooltips with new info
         circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
         
-        textGroup = renderText(textGroup, xLinearScale, chosenXAxis, yLinearScale, chosenYAxis);
-
         // changes classes to change bold text
         if (chosenXAxis === "poverty") {
-          povertyLabel.classed("active", true);
-          ageLabel.classed("inactive", false);
-          incomeLabel.classed("active", false);
-        }
-        else if (chosenXAxis === "age") {
-          povertyLabel.classed("active", false);
-          ageLabel.classed("inactive", true);
-          incomeLabel.classed("active", false);
-        }
-        else {
-          povertyLabel.classed("active", false);
-          ageLabel.classed("inactive", false);
-          incomeLabel.classed("active", true);
-        }
+            povertyLabel.classed("active", true).classed("inactive", false);
+            ageLabel.classed("active", false).classed("inactive", true);
+            incomeLabel.classed("active", false).classed("inactive", true);
+        } else if (chosenXAxis === "age") {
+            povertyLabel.classed("active", false).classed("inactive", true);
+            ageLabel.classed("active", true).classed("inactive", false);
+            incomeLabel.classed("active", false).classed("inactive", true);
+        } else {
+            povertyLabel.classed("active", false).classed("inactive", true);
+            ageLabel.classed("active", false).classed("inactive", true);
+            incomeLabel.classed("active", true).classed("inactive", false);
+      }
       }
     });
 
@@ -380,8 +378,9 @@ d3.csv("./assets/data/data.csv").then(function(state_data,err) {
               circlesGroup = renderCircles(circlesGroup, xLinearScale, chosenXAxis, yLinearScale, chosenYAxis);
 
               //update text with new y values
+              textGroup = renderText(textGroup, xLinearScale, chosenXAxis, yLinearScale, chosenYAxis)
 
-              textGroup = renderText(textGroup, xLinearScale, chosenXAxis, yLinearScale, chosenYAxis);
+
 
 
 
